@@ -24,10 +24,10 @@
 ######################################################
 
 treelevel_entropy <- function(plotNumber, treeTable){
-  #' @description Calculating the tree level entropy using a dataframe column of the level characteristics in one plot  
+  #' @description Calculates the tree level entropy using a dataframe column of the level characteristics in one plot  
   #' 
   #' @param plotNumber The number of the plot as numeric argument
-  #' @param treeTable A dataframe containing at least the plotnumber (header = Plot) and the tree species (header = species)
+  #' @param treeTable A dataframe containing at least the plotnumber (header = plot) and the tree species (header = species)
   #' @references Lingenfelder, M. & J. Weber (2001): Analyse der Strukturdiversität in Bannwäldern. - in: AFZ-Der Wald. 13. S. 695 - 697.
   
   #load the tree species of one plot

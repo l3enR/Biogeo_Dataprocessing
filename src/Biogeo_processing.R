@@ -58,7 +58,18 @@ for(i in 1:nrow(deathwood)){
   }
 }
 #--------------------------------------------------------------------
-#statistical alalysis
+#STATISTICAL ANALYSIS
+
+#needed parameters:
+# tree species diversity    [v]
+# tree level diversity      [v]
+# tree condition diversity  [ ]
+# overall diversity         [ ]
+
+# tree species evenness     [ ]
+# tree level evenness       [ ]
+# tree condition evenness   [ ]
+# overall evenness          [ ]
 
 #shannon entropy
 
@@ -118,3 +129,9 @@ for(i in 1:length(unique(trees$Plot))){
 
 # write.csv(totalTreeLevelEntropy, paste0(file_base, paste0("entropy/treeLevelEntropy_vers", currentVersion,".csv")), row.names = FALSE)
 # totalTreeLevelEntropy <- read.csv(paste0(file_base, paste0("entropy/treeLevelEntropy_vers", currentVersion,".csv")), stringsAsFactors = FALSE)
+
+# 3 tree condition entropy
+
+#trees of the class 1 and 3 are used in the calculation as dead trees
+
+
