@@ -1,26 +1,34 @@
+####Before using this script:##################
+
 #1 the file base has to be changed to the personal directory
-#2 the loaded .csv files at the beginning are extracted from the current version of the "Strukturplots_Tabelle"
-#  every excel sheet has to be extracted (just a copy) in a new excel file and than have to be saved as .csv using the respective name
+#2 the loaded .csv files in the "org" folder are extracted from the current version of the "Strukturplots_Tabelle"
+#  every single excel sheet was extracted (just a copy) in a new excel file and was saved as .csv using the respective name
+#3 the name of the current version has to be filled in  (with a leading 0 for one-digit numbers -> 05 instead of 5)
+
+###############################################
+
 file_base <- "~/Studium/02_Master/07_Biogeographie/R/Biogeo_Dataprocessing/"
+currentVersion <- "05"
 #--------------------------------------------------------------------
 #read the table
 
-general <- read.csv(paste0(file_base, "org/Vers05_general.csv"), sep = ";", stringsAsFactors = FALSE)
+general <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_general.csv")), sep = ";", stringsAsFactors = FALSE)
 
-trees <- read.csv(paste0(file_base, "org/Vers05_Trees.csv"), sep = ";", dec = ",", stringsAsFactors = FALSE)
+trees <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_trees.csv")), sep = ";", dec = ",", stringsAsFactors = FALSE)
 trees <- trees[1:68,]
 
-youngTrees <- read.csv(paste0(file_base, "org/Vers05_youngTrees.csv"), sep = ";", dec = ",", stringsAsFactors = FALSE)
+youngTrees <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_youngTrees.csv")), sep = ";", dec = ",", stringsAsFactors = FALSE)
 youngTrees <- youngTrees[1:14,]
 
-herbals <- read.csv(paste0(file_base, "org/Vers05_herbals.csv"), sep = ";", dec = ",", stringsAsFactors = FALSE)
+herbals <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_herbals.csv")), sep = ";", dec = ",", stringsAsFactors = FALSE)
 
-deathwood <- read.csv(paste0(file_base, "org/Vers05_deathwood.csv"), sep = ";", dec = ",", stringsAsFactors = FALSE)
+deathwood <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_deathwood.csv")), sep = ";", dec = ",", stringsAsFactors = FALSE)
 
 #--------------------------------------------------------------------
 #assign the height level to each tree (5m levels)
 levels <- seq(from = 5, to = 45, by = 5)
 
+#derivation
 # trees$totalHeight[1] > levels
 # levels[trees$totalHeight[1] > levels]
 # length(levels[trees$totalHeight[1] > levels])
@@ -29,6 +37,9 @@ levels <- seq(from = 5, to = 45, by = 5)
 for(i in 1:nrow(trees)){
   trees$level[i] <- length(levels[trees$totalHeight[i] > levels]) + 1
 }
+
+# write.csv(trees, paste0(file_base, paste0("processed/treesWithLevels_vers", currentVersion, ".csv")), row.names = FALSE)
+# trees <- read.csv(paste0(file_base, paste0("processed/treesWithLevels_vers", currentVersion, ".csv")), stringsAsFactors = FALSE)
 
 #--------------------------------------------------------------------
 #assign the height level to each dead tree (5m levels)
@@ -63,23 +74,47 @@ for(i in 1:nrow(deathwood)){
 #p(i = beech) = 7/10
 #p(i = oak) = 3/10
 
+#--------------------------------------------------------------------
+
 # 1 tree species entropy
 
 #load tree species entropy function
-source(paste0(file_base, "src/treespeciesEntropy_fun.R"), )
+source(paste0(file_base, "src/treespeciesEntropy_fun.R"))
 #test
-treespecies_entropy(plotNumber = 3, treeTable = trees)
+treespecies_entropy(plotNumber = 1, treeTable = trees)
 
-generalTreespeciesEntropy <- data.frame(plotNumber = NA, entropy = NA)
+totalTreespeciesEntropy <- data.frame(plotNumber = NA, entropy = NA)
 for(i in 1:length(unique(trees$Plot))){
   if(i == 1){
-    generalTreespeciesEntropy$plotNumber <- unique(trees$Plot)[i]
-    generalTreespeciesEntropy$entropy <- treespecies_entropy(plotNumber = i, treeTable = trees)
+    totalTreespeciesEntropy$plotNumber <- unique(trees$Plot)[i]
+    totalTreespeciesEntropy$entropy <- treespecies_entropy(plotNumber = i, treeTable = trees)
   }else{
     temp_plotNumber <- unique(trees$Plot)[i]
     temp_entropy <- treespecies_entropy(plotNumber = i, treeTable = trees)
-    generalTreespeciesEntropy[i,] <- c(temp_plotNumber, temp_entropy)
+    totalTreespeciesEntropy[i,] <- c(temp_plotNumber, temp_entropy)
   }
 }
-# write.csv(generalTreespeciesEntropy, paste0(file_base, "entropy/treeSpeciesEntropy_vers5.csv"), row.names = FALSE)
-# read.csv(paste0(file_base, "entropy/treeSpeciesEntropy_vers5.csv"), stringsAsFactors = FALSE)
+# write.csv(totalTreespeciesEntropy, paste0(file_base, paste0("entropy/treeSpeciesEntropy_vers", currentVersion, ".csv")), row.names = FALSE)
+# totalTreespeciesEntropy <- read.csv(paste0(file_base, paste0("entropy/treeSpeciesEntropy_vers", currentVersion, ".csv")), stringsAsFactors = FALSE)
+#------------------------------------------------------------------------------
+
+# 2 tree level entropy
+
+source(paste0(file_base, "src/treelevelEntropy_fun.R"))
+#test
+treelevel_entropy(plotNumber = 1, treeTable = trees)
+
+totalTreeLevelEntropy <- data.frame(plotNumber = NA, entropy = NA)
+for(i in 1:length(unique(trees$Plot))){
+  if(i == 1){
+    totalTreeLevelEntropy$plotNumber <- unique(trees$Plot)[i]
+    totalTreeLevelEntropy$entropy <- treelevel_entropy(plotNumber = i, treeTable = trees)
+  }else{
+    temp_plotNumber <- unique(trees$Plot)[i]
+    temp_entropy <- treelevel_entropy(plotNumber = i, treeTable = trees)
+    totalTreeLevelEntropy[i,] <- c(temp_plotNumber, temp_entropy)
+  }
+}
+
+# write.csv(totalTreeLevelEntropy, paste0(file_base, paste0("entropy/treeLevelEntropy_vers", currentVersion,".csv")), row.names = FALSE)
+# totalTreeLevelEntropy <- read.csv(paste0(file_base, paste0("entropy/treeLevelEntropy_vers", currentVersion,".csv")), stringsAsFactors = FALSE)
