@@ -5,14 +5,12 @@
 
 # condition <- c("livingTrees", "deathwood")
 # 
-# livingTrees_plot1 <- nrow(trees[trees$Plot == 1,])
+# livingTrees_plot1 <- nrow(trees[trees$plot == 1,])
 # 
-# deathwood_plot1 <- deathwood[deathwood$Plot == 1,]
+# deathwood_plot1 <- deathwood[deathwood$plot == 1,]
 # deathwood_plot1 <- nrow(deathwood_plot1[deathwood_plot1$class == 1 | deathwood_plot1$class == 3,])
 # 
-# count <- c(NA,NA)
-# count[1] <- livingTrees_plot1
-# count[2] <- deathwood_plot1
+# count <- c(livingTrees_plot1, deathwood_plot1)
 # 
 # entropy <- data.frame(condition = condition, count = count, probability = NA, entropy = NA)
 # 
@@ -33,27 +31,31 @@ treecondition_entropy <- function(plotNumber, treeTable, deathwoodTable){
   #' 
   #' @param plotNumber The number of the plot as numeric argument
   #' @param treeTable A dataframe containing at least the plotnumber (header = plot) and the tree species (header = species)
-  #' @param deathwoodTable A dataframe containing at least the plotnumber (header = plot) and the class (header = class)
+  #' @param deathwoodTable A dataframe containing at least the plotnumber (header = plot) and the class (header = class). Only trees of the class 1 and three were used
   #' @references Lingenfelder, M. & J. Weber (2001): Analyse der Strukturdiversität in Bannwäldern. - in: AFZ-Der Wald. 13. S. 695 - 697.
   
   #get the number of living trees in one plot
-  livingTrees <- nrow(treeTable[treeTable$Plot == plotNumber,])
+  livingTrees <- nrow(treeTable[treeTable$plot == plotNumber,])
+  #get the number of dead trees
+  deadTrees <- deathwoodTable[deathwoodTable$plot == plotNumber,]
+  deadTrees <- nrow(deadTrees[deadTrees$class == 1 | deadTrees$class == 3,])
+  #fill the count argument
+  count <- c(livingTrees, deadTrees)
+  #define the condition
+  condition <- c("livingTrees", "deadTrees")
   
-  #extract the unique species
-  species <- unique(treesInPlot$species)
-  #extract the number of the unique individuals 
-  count <- c()
-  for(i in 1:length(species)){
-    count[i] <- nrow(treesInPlot[treesInPlot$species == species[i],])
-  }
-  #generating a dataframe containing the results for each individual species
-  entropy <- data.frame(species = species, count = count, probability = NA, entropy = NA)
+  #generating a dataframe containing the results for the two conditions
+  entropy <- data.frame(condition = condition, count = count, probability = NA, entropy = NA)
   #calculating the probability and the entropy
   for(i in 1:nrow(entropy)){
     entropy$probability[i] <- entropy$count[i] / sum(entropy$count)
     entropy$entropy[i] <- entropy$probability[i] * log(entropy$probability[i], base = 2)
+    #to avoid NaN values entropy is turned to 0
+    if(is.na(entropy$entropy[i])){
+      entropy$entropy[i] <- 0
+    }
   }
   #calculating the overall tree species entropy for the plot
-  overallTreespEntropy <- -sum(entropy$entropy)
-  return(overallTreespEntropy)
+  overallTreecondEntropy <- -sum(entropy$entropy)
+  return(overallTreecondEntropy)
 }

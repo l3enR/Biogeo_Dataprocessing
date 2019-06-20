@@ -1,4 +1,4 @@
-Plot;species;lat;coverage;comment;foto
+plot;species;lat;coverage;comment;foto
 1;Gewoehnliches Springkraut;Impatiens noli-tangere;r;lateinischen Namen ueberpruefen;20190604_134001
 1;Waldmeister;Galium odoratum;+;NA;NA
 1;Eiche;Quercus ?;1;NA;NA
@@ -57,7 +57,7 @@ Plot;species;lat;coverage;comment;foto
 6;Eiche ;Quercus ?;r;(Keimling);NA
 6;H016;NA;r;Das nichtssagende, samtige Blaetter (Herbarium);NA
 6;Buschwindroeschen;Anemone nemorosa;r;NA;NA
-6;Brenessel;Urtica …;r;Herbarium;NA
+6;Brenessel;Urtica ?;r;Herbarium;NA
 7;Gewoehnliche Esche;Fraxinus excelsior;r;NA;NA
 7;Rotbuche;Fagus sylvatica;1;NA;NA
 7;Farn;NA;+;NA;NA

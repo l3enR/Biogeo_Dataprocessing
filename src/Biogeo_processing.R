@@ -8,7 +8,7 @@
 ###############################################
 
 file_base <- "~/Studium/02_Master/07_Biogeographie/R/Biogeo_Dataprocessing/"
-currentVersion <- "05"
+currentVersion <- "06"
 #--------------------------------------------------------------------
 #read the table
 
@@ -62,8 +62,8 @@ for(i in 1:nrow(deathwood)){
 
 #needed parameters:
 # tree species diversity    [v]
-# tree level diversity      [v]
-# tree condition diversity  [ ]
+# tree level diversity      [?] does the deathwood also count? (in this case all instead of one tree in level 1) -> class 1+3
+# tree condition diversity  [v] deathwood = of class 1(standing tree) or 3(lying tree)
 # overall diversity         [ ]
 
 # tree species evenness     [ ]
@@ -95,12 +95,12 @@ source(paste0(file_base, "src/treespeciesEntropy_fun.R"))
 treespecies_entropy(plotNumber = 1, treeTable = trees)
 
 totalTreespeciesEntropy <- data.frame(plotNumber = NA, entropy = NA)
-for(i in 1:length(unique(trees$Plot))){
+for(i in 1:length(unique(trees$plot))){
   if(i == 1){
-    totalTreespeciesEntropy$plotNumber <- unique(trees$Plot)[i]
+    totalTreespeciesEntropy$plotNumber <- unique(trees$plot)[i]
     totalTreespeciesEntropy$entropy <- treespecies_entropy(plotNumber = i, treeTable = trees)
   }else{
-    temp_plotNumber <- unique(trees$Plot)[i]
+    temp_plotNumber <- unique(trees$plot)[i]
     temp_entropy <- treespecies_entropy(plotNumber = i, treeTable = trees)
     totalTreespeciesEntropy[i,] <- c(temp_plotNumber, temp_entropy)
   }
@@ -116,12 +116,12 @@ source(paste0(file_base, "src/treelevelEntropy_fun.R"))
 treelevel_entropy(plotNumber = 1, treeTable = trees)
 
 totalTreeLevelEntropy <- data.frame(plotNumber = NA, entropy = NA)
-for(i in 1:length(unique(trees$Plot))){
+for(i in 1:length(unique(trees$plot))){
   if(i == 1){
-    totalTreeLevelEntropy$plotNumber <- unique(trees$Plot)[i]
+    totalTreeLevelEntropy$plotNumber <- unique(trees$plot)[i]
     totalTreeLevelEntropy$entropy <- treelevel_entropy(plotNumber = i, treeTable = trees)
   }else{
-    temp_plotNumber <- unique(trees$Plot)[i]
+    temp_plotNumber <- unique(trees$plot)[i]
     temp_entropy <- treelevel_entropy(plotNumber = i, treeTable = trees)
     totalTreeLevelEntropy[i,] <- c(temp_plotNumber, temp_entropy)
   }
@@ -129,9 +129,27 @@ for(i in 1:length(unique(trees$Plot))){
 
 # write.csv(totalTreeLevelEntropy, paste0(file_base, paste0("entropy/treeLevelEntropy_vers", currentVersion,".csv")), row.names = FALSE)
 # totalTreeLevelEntropy <- read.csv(paste0(file_base, paste0("entropy/treeLevelEntropy_vers", currentVersion,".csv")), stringsAsFactors = FALSE)
+#------------------------------------------------------------------------------
 
 # 3 tree condition entropy
 
 #trees of the class 1 and 3 are used in the calculation as dead trees
+source(paste0(file_base, "src/treeconditionEntropy_fun.R"))
+#test
+treecondition_entropy(plotNumber = 2, treeTable = trees, deathwoodTable = deathwood)
 
+totalTreeConditionEntropy <- data.frame(plotNumber = NA, entropy = NA)
+for(i in 1:length(unique(trees$plot))){
+  if(i == 1){
+    totalTreeConditionEntropy$plotNumber <- unique(trees$plot)[i]
+    totalTreeConditionEntropy$entropy <- treecondition_entropy(plotNumber = i, treeTable = trees, deathwoodTable = deathwood)
+  }else{
+    temp_plotNumber <- unique(trees$plot)[i]
+    temp_entropy <- treecondition_entropy(plotNumber = i, treeTable = trees, deathwoodTable = deathwood)
+    totalTreeConditionEntropy[i,] <- c(temp_plotNumber, temp_entropy)
+  }
+}
 
+# write.csv(totalTreeConditionEntropy, paste0(file_base, paste0("entropy/treeConditionEntropy_vers", currentVersion,".csv")), row.names = FALSE)
+# totalTreeConditionEntropy <- read.csv(paste0(file_base, paste0("entropy/treeConditionEntropy_vers", currentVersion,".csv")), stringsAsFactors = FALSE)
+#------------------------------------------------------------------------------

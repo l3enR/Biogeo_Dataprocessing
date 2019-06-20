@@ -3,7 +3,7 @@
 
 #trees from org/VersX_Trees.csv
 
-# trees_plot1 <- trees[trees$Plot == 1,]
+# trees_plot1 <- trees[trees$plot == 1,]
 # species <- unique(trees_plot1$species)
 # 
 # count <- c()
@@ -31,7 +31,7 @@ treespecies_entropy <- function(plotNumber, treeTable){
   #' @references Lingenfelder, M. & J. Weber (2001): Analyse der Strukturdiversität in Bannwäldern. - in: AFZ-Der Wald. 13. S. 695 - 697.
   
   #load the tree species of one plot
-  treesInPlot <- treeTable[treeTable$Plot == plotNumber,]
+  treesInPlot <- treeTable[treeTable$plot == plotNumber,]
   #extract the unique species
   species <- unique(treesInPlot$species)
   #extract the number of the unique individuals 

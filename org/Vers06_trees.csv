@@ -1,4 +1,4 @@
-Plot;ID;numberPlate;colorPlate;deviationNord;distanceCP;species;habitatTree;height_a;height_b;height_c;height_d;totalHeight;diameterAtBreast
+plot;ID;numberPlate;colorPlate;deviationNord;distanceCP;species;habitatTree;height_a;height_b;height_c;height_d;totalHeight;diameterAtBreast
 1;1;08900;r;8;2,5;Stieleiche;0;1,6;0,7;0,7;16,4;18;1,63
 1;2;00141;r;5;8,2;Hainbuche;0;1,6;0,7;0,7;12,2;13,8;0,7
 1;3;00135;r;48;8,3;Hainbuche;0;1,6;0,7;0,7;15,9;17,5;0,76

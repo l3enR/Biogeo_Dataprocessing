@@ -1,4 +1,4 @@
-Plot;class;length;diameter;decompositionLevel;soilContact
+plot;class;length;diameter;decompositionLevel;soilContact
 1;2;2;0,4;z4;1
 1;4;10;0,09;z3;1
 1;5;7;0,02;z3;1
@@ -28,7 +28,7 @@ Plot;class;length;diameter;decompositionLevel;soilContact
 6;3;30;0,2;z1;1
 6;3;100;0,15;z2;0
 6;3;10;0,12;z4;1
-7;2;180;0,55;z2;1
+7;2;1,8;0,55;z2;1
 7;4;9;0,04;z1;0
 7;4;9;0,12;z2;1
 7;4;3;0,07;z3;1
