@@ -1,21 +1,21 @@
 #1 the file base has to be changed to the personal directory
 #2 the loaded .csv files at the beginning are extracted from the current version of the "Strukturplots_Tabelle"
 #  every excel sheet has to be extracted (just a copy) in a new excel file and than have to be saved as .csv using the respective name
-file_base <- "F:/MODULE/07_Biogeographie/R/"
+file_base <- "~/Studium/02_Master/07_Biogeographie/R/Biogeo_Dataprocessing/"
 #--------------------------------------------------------------------
 #read the table
 
-general <- read.csv(paste0(file_base, "Vers05_general.csv"), sep = ";", stringsAsFactors = FALSE)
+general <- read.csv(paste0(file_base, "org/Vers05_general.csv"), sep = ";", stringsAsFactors = FALSE)
 
-trees <- read.csv(paste0(file_base, "Vers05_Trees.csv"), sep = ";", dec = ",", stringsAsFactors = FALSE)
+trees <- read.csv(paste0(file_base, "org/Vers05_Trees.csv"), sep = ";", dec = ",", stringsAsFactors = FALSE)
 trees <- trees[1:68,]
 
-youngTrees <- read.csv(paste0(file_base, "Vers05_youngTrees.csv"), sep = ";", dec = ",", stringsAsFactors = FALSE)
+youngTrees <- read.csv(paste0(file_base, "org/Vers05_youngTrees.csv"), sep = ";", dec = ",", stringsAsFactors = FALSE)
 youngTrees <- youngTrees[1:14,]
 
-herbals <- read.csv(paste0(file_base, "Vers05_herbals.csv"), sep = ";", dec = ",", stringsAsFactors = FALSE)
+herbals <- read.csv(paste0(file_base, "org/Vers05_herbals.csv"), sep = ";", dec = ",", stringsAsFactors = FALSE)
 
-deathwood <- read.csv(paste0(file_base, "Vers05_deathwood.csv"), sep = ";", dec = ",", stringsAsFactors = FALSE)
+deathwood <- read.csv(paste0(file_base, "org/Vers05_deathwood.csv"), sep = ";", dec = ",", stringsAsFactors = FALSE)
 
 #--------------------------------------------------------------------
 #assign the height level to each tree (5m levels)
@@ -63,59 +63,12 @@ for(i in 1:nrow(deathwood)){
 #p(i = beech) = 7/10
 #p(i = oak) = 3/10
 
-######################################################
-# #example for one plot
+# 1 tree species entropy
 
-# trees_plot1 <- trees[trees$Plot == 1,]
-# species <- unique(trees_plot1$species)
-# 
-# count <- c()
-# 
-# for(i in 1:length(species)){
-#   count[i] <- nrow(trees_plot1[trees_plot1$species == species[i],])
-# }
-# 
-# entropy <- data.frame(species = species, count = count, probability = NA, entropy = NA)
-# 
-# for(i in 1:nrow(entropy)){
-#   entropy$probability[i] <- entropy$count[i] / sum(entropy$count)
-#   entropy$entropy[i] <- entropy$probability[i] * log(entropy$probability[i], base = 2)
-# }
-# 
-# #the entropy of the tree species for plot 1
-# H1_treespecies_plot1 <- -sum(entropy$entropy)
-######################################################
-
-treespecies_entropy <- function(plotNumber, treeTable){
-  #' @description Calculating the tree species entropy using a dataframe column of the species in one plot  
-  #' 
-  #' @param plotNumber The number of the plot as numeric argument
-  #' @param treeTable A dataframe containing at least the plotnumber (header = Plot) and the tree species (header = species)
-  #' @references Lingenfelder, M. & J. Weber (2001): Analyse der Strukturdiversität in Bannwäldern. - in: AFZ-Der Wald. 13. S. 695 - 697.
-  
-  #load the tree species of one plot
-  treesInPlot <- treeTable[treeTable$Plot == plotNumber,]
-  #extract the unique species
-  species <- unique(treesInPlot$species)
-  #extract the number of the unique individuals 
-  count <- c()
-  for(i in 1:length(species)){
-    count[i] <- nrow(treesInPlot[treesInPlot$species == species[i],])
-  }
-  #generating a dataframe containing the results for each individual species
-  entropy <- data.frame(species = species, count = count, probability = NA, entropy = NA)
-  #calculating the probability and the entropy
-  for(i in 1:nrow(entropy)){
-    entropy$probability[i] <- entropy$count[i] / sum(entropy$count)
-    entropy$entropy[i] <- entropy$probability[i] * log(entropy$probability[i], base = 2)
-  }
-  #calculating the overall tree species entropy for the plot
-  overallTreespEntropy <- -sum(entropy$entropy)
-  return(overallTreespEntropy)
-}
-
+#load tree species entropy function
+source(paste0(file_base, "src/treespeciesEntropy_fun.R"), )
+#test
 treespecies_entropy(plotNumber = 3, treeTable = trees)
-
 
 generalTreespeciesEntropy <- data.frame(plotNumber = NA, entropy = NA)
 for(i in 1:length(unique(trees$Plot))){
@@ -128,5 +81,5 @@ for(i in 1:length(unique(trees$Plot))){
     generalTreespeciesEntropy[i,] <- c(temp_plotNumber, temp_entropy)
   }
 }
-# write.csv(generalTreespeciesEntropy, paste0(file_base, "treeSpeciesEntropy_vers5.csv"), row.names = FALSE)
-# read.csv(paste0(file_base, "treeSpeciesEntropy_vers5.csv"), stringsAsFactors = FALSE)
+# write.csv(generalTreespeciesEntropy, paste0(file_base, "entropy/treeSpeciesEntropy_vers5.csv"), row.names = FALSE)
+# read.csv(paste0(file_base, "entropy/treeSpeciesEntropy_vers5.csv"), stringsAsFactors = FALSE)
