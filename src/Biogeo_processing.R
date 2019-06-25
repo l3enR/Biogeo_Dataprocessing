@@ -8,14 +8,14 @@
 ###############################################
 
 file_base <- "~/Studium/02_Master/07_Biogeographie/R/Biogeo_Dataprocessing/"
-currentVersion <- "06"
+currentVersion <- "07"
 #--------------------------------------------------------------------
-#read the table
+# 1 read the table
 
 general <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_general.csv")), sep = ";", stringsAsFactors = FALSE)
 
-trees <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_trees.csv")), sep = ";", dec = ",", stringsAsFactors = FALSE)
-trees <- trees[1:68,]
+#load the processed table at 2.1
+# trees <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_trees.csv")), sep = ";", dec = ",", stringsAsFactors = FALSE)
 
 youngTrees <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_youngTrees.csv")), sep = ";", dec = ",", stringsAsFactors = FALSE)
 youngTrees <- youngTrees[1:14,]
@@ -25,7 +25,9 @@ herbals <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_herba
 deathwood <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_deathwood.csv")), sep = ";", dec = ",", stringsAsFactors = FALSE)
 
 #--------------------------------------------------------------------
-#assign the height level to each tree (5m levels)
+
+# 2.1 assign the height level to each tree (5m levels)
+
 levels <- seq(from = 5, to = 45, by = 5)
 
 #derivation
@@ -39,26 +41,35 @@ for(i in 1:nrow(trees)){
 }
 
 # write.csv(trees, paste0(file_base, paste0("processed/treesWithLevels_vers", currentVersion, ".csv")), row.names = FALSE)
-# trees <- read.csv(paste0(file_base, paste0("processed/treesWithLevels_vers", currentVersion, ".csv")), stringsAsFactors = FALSE)
+trees <- read.csv(paste0(file_base, paste0("processed/treesWithLevels_vers", currentVersion, ".csv")), stringsAsFactors = FALSE)
 
 #--------------------------------------------------------------------
+
+# 2.2 
+
+#IN PROGRESS########################################################
+
 #assign the height level to each dead tree (5m levels)
 #the values are not useful because the lenght was summed up for treetrunks
 #only tree trunks and standing trees have a level > 1
 # -> the length is the indicator for the height
 #smaller deathwood parts are not included in the form
-levels <- seq(from = 5, to = 45, by = 5)
 
+# levels <- seq(from = 5, to = 45, by = 5)
+# 
+# 
+# for(i in 1:nrow(deathwood)){
+#   if(deathwood$class[i] == 1 | deathwood$class[i] == 3){#####IS THIS VALUES CORRECT?
+#     deathwood$level[i] <- length(levels[deathwood$length[i] > levels]) + 1
+#   }else{
+#     deathwood$level[i] <- 1
+#   }
+# }
 
-for(i in 1:nrow(deathwood)){
-  if(deathwood$class[i] == 1 | deathwood$class[i] == 3){#####IS THIS VALUES CORRECT?
-    deathwood$level[i] <- length(levels[deathwood$length[i] > levels]) + 1
-  }else{
-    deathwood$level[i] <- 1
-  }
-}
+#IN PROGRESS########################################################
 #--------------------------------------------------------------------
-#STATISTICAL ANALYSIS
+
+#3 STATISTICAL ANALYSIS
 
 #needed parameters:
 # tree species diversity    [v]
@@ -85,31 +96,28 @@ for(i in 1:nrow(deathwood)){
 #p(i = beech) = 7/10
 #p(i = oak) = 3/10
 
+#evenness
+
+#as E = H/Hmax
+#H...entropy as calculated above
+#hmax... calculated by log(n)
+# -> log(n) = equal distribution of the species number to the number of species
+#
+#exampl. 10 trees total, 7 beech trees, 3 oak trees
+#Hmax = 0,5 for p(beech) and 0,5 for p(oak)
 #--------------------------------------------------------------------
 
-# 1 tree species entropy
+# 3.1 tree species entropy
 
 #load tree species entropy function
 source(paste0(file_base, "src/treespeciesEntropy_fun.R"))
-#test
-treespecies_entropy(plotNumber = 1, treeTable = trees)
 
-totalTreespeciesEntropy <- data.frame(plotNumber = NA, entropy = NA)
-for(i in 1:length(unique(trees$plot))){
-  if(i == 1){
-    totalTreespeciesEntropy$plotNumber <- unique(trees$plot)[i]
-    totalTreespeciesEntropy$entropy <- treespecies_entropy(plotNumber = i, treeTable = trees)
-  }else{
-    temp_plotNumber <- unique(trees$plot)[i]
-    temp_entropy <- treespecies_entropy(plotNumber = i, treeTable = trees)
-    totalTreespeciesEntropy[i,] <- c(temp_plotNumber, temp_entropy)
-  }
-}
-# write.csv(totalTreespeciesEntropy, paste0(file_base, paste0("entropy/treeSpeciesEntropy_vers", currentVersion, ".csv")), row.names = FALSE)
-# totalTreespeciesEntropy <- read.csv(paste0(file_base, paste0("entropy/treeSpeciesEntropy_vers", currentVersion, ".csv")), stringsAsFactors = FALSE)
+#run the function and load the output
+treespecies_entropy(treeTable = trees, outputFolder = paste0(file_base, "entropy/treeSpeciesEntropy_vers", currentVersion, ".csv"))
+totalTreespeciesEntropy <- read.csv(paste0(file_base, "entropy/treeSpeciesEntropy_vers", currentVersion, ".csv"), stringsAsFactors = FALSE)
 #------------------------------------------------------------------------------
 
-# 2 tree level entropy
+# 3.2 tree level entropy
 
 source(paste0(file_base, "src/treelevelEntropy_fun.R"))
 #test
@@ -131,7 +139,7 @@ for(i in 1:length(unique(trees$plot))){
 # totalTreeLevelEntropy <- read.csv(paste0(file_base, paste0("entropy/treeLevelEntropy_vers", currentVersion,".csv")), stringsAsFactors = FALSE)
 #------------------------------------------------------------------------------
 
-# 3 tree condition entropy
+# 3.3 tree condition entropy
 
 #trees of the class 1 and 3 are used in the calculation as dead trees
 source(paste0(file_base, "src/treeconditionEntropy_fun.R"))
@@ -153,3 +161,12 @@ for(i in 1:length(unique(trees$plot))){
 # write.csv(totalTreeConditionEntropy, paste0(file_base, paste0("entropy/treeConditionEntropy_vers", currentVersion,".csv")), row.names = FALSE)
 # totalTreeConditionEntropy <- read.csv(paste0(file_base, paste0("entropy/treeConditionEntropy_vers", currentVersion,".csv")), stringsAsFactors = FALSE)
 #------------------------------------------------------------------------------
+
+# 3.4 tree species evenness
+
+source(paste0(file_base, "src/treespeciesEvenness_fun.R"))
+#test
+treespecies_evenness(plotNumber = 1, treeTable = trees, entropy = totalTreespeciesEntropy)
+
+totalTreespeciesEvenness <- data.frame(plotNumber = NA, evenness = NA)
+for(i in 1:length(unique(trees$plot)))
