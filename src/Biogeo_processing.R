@@ -7,7 +7,8 @@
 
 ###############################################
 
-file_base <- "~/Studium/02_Master/07_Biogeographie/R/Biogeo_Dataprocessing/"
+#file_base <- "~/Studium/02_Master/07_Biogeographie/R/Biogeo_Dataprocessing/"
+file_base <- "F:/MODULE/07_Biogeographie/R/Biogeo_Dataprocessing/"
 currentVersion <- "07"
 #--------------------------------------------------------------------
 # 1 read the table
@@ -22,11 +23,12 @@ youngTrees <- youngTrees[1:14,]
 
 herbals <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_herbals.csv")), sep = ";", dec = ",", stringsAsFactors = FALSE)
 
-deathwood <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_deathwood.csv")), sep = ";", dec = ",", stringsAsFactors = FALSE)
+#load the processed table at 2.2
+# deathwood <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_deathwood.csv")), sep = ";", dec = ",", stringsAsFactors = FALSE)
 
 #--------------------------------------------------------------------
 
-# 2.1 assign the height level to each tree (5m levels)
+# 2.1 assign the height level to each living tree (5m levels)
 
 levels <- seq(from = 5, to = 45, by = 5)
 
@@ -45,28 +47,29 @@ trees <- read.csv(paste0(file_base, paste0("processed/treesWithLevels_vers", cur
 
 #--------------------------------------------------------------------
 
-# 2.2 
+# 2.2 assign the height level to each dead tree (5m levels)
 
-#IN PROGRESS########################################################
+#only the category 1 (standing tree) and 3 (lying tree) should be assigned to a height level
+#-> other categories = NA
+#standing trees could have a level > 1 -> biased by transversal lying trees which are defined as level 1
 
-#assign the height level to each dead tree (5m levels)
-#the values are not useful because the lenght was summed up for treetrunks
-#only tree trunks and standing trees have a level > 1
-# -> the length is the indicator for the height
 #smaller deathwood parts are not included in the form
 
-# levels <- seq(from = 5, to = 45, by = 5)
-# 
-# 
-# for(i in 1:nrow(deathwood)){
-#   if(deathwood$class[i] == 1 | deathwood$class[i] == 3){#####IS THIS VALUES CORRECT?
-#     deathwood$level[i] <- length(levels[deathwood$length[i] > levels]) + 1
-#   }else{
-#     deathwood$level[i] <- 1
-#   }
-# }
+levels <- seq(from = 5, to = 45, by = 5)
 
-#IN PROGRESS########################################################
+for(i in 1:nrow(deathwood)){
+  if(deathwood$class[i] == 2 | deathwood$class[i] > 3){
+    deathwood$level[i] <- NA
+  }else if(deathwood$class[i] == 3){
+    deathwood$level[i] <- 1
+  }else{
+    deathwood$level[i] <- length(levels[deathwood$length[i] > levels]) + 1
+  }
+}
+
+# write.csv(deathwood, paste0(file_base, paste0("processed/deathwoodWithLevels_vers", currentVersion, ".csv")), row.names = FALSE)
+trees <- read.csv(paste0(file_base, paste0("processed/deathwoodWithLevels_vers", currentVersion, ".csv")), stringsAsFactors = FALSE)
+
 #--------------------------------------------------------------------
 
 #3 STATISTICAL ANALYSIS
@@ -77,7 +80,7 @@ trees <- read.csv(paste0(file_base, paste0("processed/treesWithLevels_vers", cur
 # tree condition diversity  [v] deathwood = of class 1(standing tree) or 3(lying tree)
 # overall diversity         [ ]
 
-# tree species evenness     [ ]
+# tree species evenness     [v]
 # tree level evenness       [ ]
 # tree condition evenness   [ ]
 # overall evenness          [ ]
@@ -164,9 +167,12 @@ for(i in 1:length(unique(trees$plot))){
 
 # 3.4 tree species evenness
 
+#load tree species evenness function
 source(paste0(file_base, "src/treespeciesEvenness_fun.R"))
-#test
-treespecies_evenness(plotNumber = 1, treeTable = trees, entropy = totalTreespeciesEntropy)
 
-totalTreespeciesEvenness <- data.frame(plotNumber = NA, evenness = NA)
-for(i in 1:length(unique(trees$plot)))
+#run the function and load the output
+treespecies_evenness(treeTable = trees, 
+                     entropy = read.csv(paste0(file_base, "entropy/treeSpeciesEntropy_vers", currentVersion, ".csv"), stringsAsFactors = FALSE), 
+                     outputFolder = paste0(file_base, "evenness/treeSpeciesEvenness_vers", currentVersion, ".csv"))
+
+totalTreespeciesEntropy <- read.csv(paste0(file_base, "evenness/treeSpeciesEvenness_vers", currentVersion, ".csv"), stringsAsFactors = FALSE)
