@@ -58,16 +58,15 @@
 treespecies_entropy <- function(treeTable, outputFolder){
   #' @description Loops over all unique plot numbers. Calculates for each the tree species entropy using a dataframe column of the species.  
   #' 
-  #' @param treeTable A dataframe containing at least the plotnumber (header = plot) and the tree species (header = species)
+  #' @param treeTable A dataframe containing at least the plotnumber (header = plot) and the tree species (header = specID)
   #' @param outputFolder The folder where the dataframe should be saved.
   #' 
-<<<<<<< HEAD
   #' @return Dataframe, which is written to the outputFolder.
-=======
-  #' @return Generates a dataframe, which is written to the outputFolder.
->>>>>>> 3d5887960317d2ece29e2a22b82afb66624ae670
   #' 
   #' @references Lingenfelder, M. & J. Weber (2001): Analyse der Strukturdiversität in Bannwäldern. - in: AFZ-Der Wald. 13. S. 695 - 697.
+  
+  
+  #anstatt plot == i unique(ites element)
   
   #create an empty data frame
   totalTreespeciesEntropy <- data.frame(plotNumber = NA, entropy = NA)

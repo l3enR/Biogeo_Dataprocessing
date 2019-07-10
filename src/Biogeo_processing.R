@@ -144,6 +144,7 @@ deathwood <- read.csv(paste0(file_base, paste0("processed/deathwoodWithLevels_ve
 #p(i = beech) = 7/10
 #p(i = oak) = 3/10
 
+
 #evenness
 
 #as E = H/Hmax
