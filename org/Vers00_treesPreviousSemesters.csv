@@ -1,4 +1,4 @@
-"id","treeID","creatorID","specID","easting","northing","height","DBH","remarks","plot"
+"ID","treeID","creatorID","specID","easting","northing","height","DBH","remarks","plot"
 1,"b00001","jk","FIG",477490.9,5632269.48,NA,0.15,NA,"fs-049"
 2,"b00002","jk","BUR",477577.44,5632278.02,NA,0.08,NA,"fs-048"
 3,"b00003","jk","FIG",477490.76,5632269.93,NA,0.08,"tot","fs-049"

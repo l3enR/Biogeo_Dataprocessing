@@ -7,14 +7,9 @@
 
 ###############################################
 
-<<<<<<< HEAD
 file_base <- "~/Studium/02_Master/07_Biogeographie/R/Biogeo_Dataprocessing/"
 #file_base <- "F:/MODULE/07_Biogeographie/R/Biogeo_Dataprocessing/"
-=======
-#file_base <- "~/Studium/02_Master/07_Biogeographie/R/Biogeo_Dataprocessing/"
-file_base <- "F:/MODULE/07_Biogeographie/R/Biogeo_Dataprocessing/"
->>>>>>> 3d5887960317d2ece29e2a22b82afb66624ae670
-currentVersion <- "07"
+currentVersion <- "00"
 #--------------------------------------------------------------------
 # 1 READ THE DATA
 
@@ -23,38 +18,43 @@ general <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_gener
 
 #trees
 #load the processed table at 2.1
-# trees <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_trees.csv")), sep = ";", dec = ",", stringsAsFactors = FALSE)
-# treePlot <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_treesPlot.csv")), sep = ";", dec = ".", stringsAsFactors = FALSE)
+# previousTrees <- read.csv(paste0(file_base, "org/Vers", currentVersion, "_treesPreviousSemesters.csv"), sep = ",", dec = ".", stringsAsFactors = FALSE)
+# trees <- read.csv(paste0(file_base, "org/Vers", currentVersion, "_trees.csv"), sep = ";", dec = ",", stringsAsFactors = FALSE)
+# treePlot <- read.csv(paste0(file_base, "org/Vers", currentVersion, "_treesPlot.csv"), sep = ";", dec = ".", stringsAsFactors = FALSE)
+# #assign trees of current semester to their plot ID
+# #remove unneccessary cols
+# trees$statusID <- NULL
 # trees$plot <- NA
+# 
 # for(i in 1:nrow(trees)){
 #   trees$plot[i] <- treePlot$plotID[treePlot$treeID == trees$treeID[i]]
 # }
 # rm(treePlot)
+# 
+# #assign ID column
+# trees$ID <- seq(from = 1077, to = as.numeric(1077+nrow(trees)-1), by = 1)
 # trees <- cbind(trees[10], trees[1:9])
-# names(trees)[5] <- "species"
-# names(trees)[8] <- "totalHeight"
+# 
+# #bind previous and current semester data together
+# trees <- rbind(previousTrees, trees)
+# 
+# rm(previousTrees)
 
 #young trees
-youngTrees <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_youngTrees.csv")), sep = ";", dec = ",", stringsAsFactors = FALSE)
+youngTrees <- read.csv(paste0(file_base, "org/Vers", currentVersion, "_youngTrees.csv"), sep = ";", dec = ",", stringsAsFactors = FALSE)
 youngTrees <- youngTrees[1:14,]
 
 #herbals
-herbals <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_herbals.csv")), sep = ";", dec = ",", stringsAsFactors = FALSE)
+herbals <- read.csv(paste0(file_base, "org/Vers", currentVersion, "_herbals.csv"), sep = ";", dec = ",", stringsAsFactors = FALSE)
 
-<<<<<<< HEAD
 #deathwood
-=======
->>>>>>> 3d5887960317d2ece29e2a22b82afb66624ae670
 #load the processed table at 2.2
 # deathwood <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_deathwood.csv")), sep = ";", dec = ",", stringsAsFactors = FALSE)
 
 #--------------------------------------------------------------------
 
-<<<<<<< HEAD
 # 2 ASSIGN THE HIGHT LEVEL
 
-=======
->>>>>>> 3d5887960317d2ece29e2a22b82afb66624ae670
 # 2.1 assign the height level to each living tree (5m levels)
 
 levels <- seq(from = 5, to = 45, by = 5)
@@ -66,12 +66,16 @@ levels <- seq(from = 5, to = 45, by = 5)
 # length(levels[trees$totalHeight[1] > levels]) + 1
 
 for(i in 1:nrow(trees)){
-  trees$level[i] <- length(levels[trees$height[i] > levels]) + 1
+  if(!is.na(trees$height[i])){
+    trees$level[i] <- length(levels[trees$height[i] > levels]) + 1
+  }else{
+    trees$level[i] <- NA
+  }
 }
+rm(levels)
 
 # write.csv(trees, paste0(file_base, paste0("processed/treesWithLevels_vers", currentVersion, ".csv")), row.names = FALSE)
 trees <- read.csv(paste0(file_base, paste0("processed/treesWithLevels_vers", currentVersion, ".csv")), stringsAsFactors = FALSE)
-
 #--------------------------------------------------------------------
 
 # 2.2 assign the height level to each dead tree (5m levels)
@@ -95,11 +99,7 @@ for(i in 1:nrow(deathwood)){
 }
 
 # write.csv(deathwood, paste0(file_base, paste0("processed/deathwoodWithLevels_vers", currentVersion, ".csv")), row.names = FALSE)
-<<<<<<< HEAD
 deathwood <- read.csv(paste0(file_base, paste0("processed/deathwoodWithLevels_vers", currentVersion, ".csv")), stringsAsFactors = FALSE)
-=======
-trees <- read.csv(paste0(file_base, paste0("processed/deathwoodWithLevels_vers", currentVersion, ".csv")), stringsAsFactors = FALSE)
->>>>>>> 3d5887960317d2ece29e2a22b82afb66624ae670
 
 #--------------------------------------------------------------------
 

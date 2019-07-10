@@ -31,8 +31,10 @@ for(i in 1:nrow(trees)){
 #remove missing values
 trees <- trees[!is.na(trees$plot),]
 
+names(trees)[1] <- "ID"
+
 #write the df
-write.csv(trees, paste0(file_base, "R/Biogeo_Dataprocessing/org/Vers00_treesALL.csv"), row.names = FALSE)
+write.csv(trees, paste0(file_base, "R/Biogeo_Dataprocessing/org/Vers00_treesPreviousSemesters.csv"), row.names = FALSE)
 
 
 
