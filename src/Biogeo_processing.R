@@ -10,6 +10,7 @@
 file_base <- "~/Studium/02_Master/07_Biogeographie/R/Biogeo_Dataprocessing/"
 #file_base <- "F:/MODULE/07_Biogeographie/R/Biogeo_Dataprocessing/"
 currentVersion <- "00"
+library(stringr)
 #--------------------------------------------------------------------
 # 1 READ THE DATA
 
@@ -50,6 +51,19 @@ herbals <- read.csv(paste0(file_base, "org/Vers", currentVersion, "_herbals.csv"
 #deathwood
 #load the processed table at 2.2
 # deathwood <- read.csv(paste0(file_base, paste0("org/Vers", currentVersion, "_deathwood.csv")), sep = ";", dec = ",", stringsAsFactors = FALSE)
+# #temporarily adjustment------------
+# plotnumberAdjust <- unique(deathwood$plot)
+# 
+# newPlotnumber <- NA
+# for(i in 1:length(plotnumberAdjust)){
+#   newPlotnumber[i] <- paste0("fs-05", i)
+# }
+# 
+# for(i in 1:nrow(deathwood)){
+#   temp <- deathwood$plot[i]
+#   deathwood$plot[i] <- newPlotnumber[as.numeric(str_sub(newPlotnumber, 6,6)) == temp] 
+# }
+#----------------------------------
 
 #--------------------------------------------------------------------
 

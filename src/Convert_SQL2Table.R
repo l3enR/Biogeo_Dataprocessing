@@ -35,11 +35,3 @@ names(trees)[1] <- "ID"
 
 #write the df
 write.csv(trees, paste0(file_base, "R/Biogeo_Dataprocessing/org/Vers00_treesPreviousSemesters.csv"), row.names = FALSE)
-
-
-
-
-
-
-
-
