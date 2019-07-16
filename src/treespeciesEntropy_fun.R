@@ -76,13 +76,13 @@ treespecies_entropy <- function(treeTable, outputFolder){
     #for one plot with the number i
     ######################################
     #load the tree species of one plot
-    treesInPlot <- treeTable[treeTable$plot == i,]
+    treesInPlot <- treeTable[treeTable$plot == unique(treeTable$plot)[i],]
     #extract the unique species
-    species <- unique(treesInPlot$species)
+    species <- unique(treesInPlot$specID)
     #extract the number of the unique individuals 
     count <- c()
     for(j in 1:length(species)){
-      count[j] <- nrow(treesInPlot[treesInPlot$species == species[j],])
+      count[j] <- nrow(treesInPlot[treesInPlot$specID == species[j],])
     }
     #generating a dataframe containing the results for each individual species
     entropy <- data.frame(species = species, count = count, probability = NA, entropy = NA)

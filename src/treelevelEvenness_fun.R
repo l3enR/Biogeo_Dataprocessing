@@ -1,19 +1,7 @@
-######################################################
-# #example for one plot
-# entropy_plot1 <- read.csv(paste0(file_base, paste0("entropy/treeSpeciesEntropy_vers", currentVersion, ".csv")), stringsAsFactors = FALSE)
-# entropy_plot1 <- entropy_plot1$entropy[entropy_plot1$plotNumber == 3]
-# trees_plot1 <- trees[trees$plot == 3,]
-# n <- length(unique(trees_plot1$species))
-# probability = 1/n
-# entropy_val <- probability*log(probability, base = 2)
-# max_entropy <- n * entropy_val * -1
-# 
-# evenness <- entropy_plot1/max_entropy
-######################################################
-
-treespecies_evenness <- function(treeTable, entropy, outputFolder){
+treelevel_evenness <- function(treeTable, deathwoodTable, entropy, outputFolder){
   #' @description Loops over all plot numbers. Calculates for each the tree species evenness using shannon entropy and the maximum entropy. The latter is calculated by expecting the same distribution of all occuring species (all with the same probability).
   #' @param treeTable A dataframe containing at least the plotnumber (header = plot).
+  #' @param deathwoodTable A dataframe containing at least the plotnumber (header = plot) and the tree level (header = level)
   #' @param entropy The entropy of the plot as a dataframe with at least one column (header = plotNumber)
   #' @param outputFolder The folder where the dataframe should be saved.
   #' 
@@ -22,7 +10,7 @@ treespecies_evenness <- function(treeTable, entropy, outputFolder){
   #' @references Lingenfelder, M. & J. Weber (2001): Analyse der Strukturdiversität in Bannwäldern. - in: AFZ-Der Wald. 13. S. 695 - 697.
   
   
-  totalTreespeciesEvenness <- data.frame(plotNumber = NA, evenness = NA)
+  totalTreelevelEvenness <- data.frame(plotNumber = NA, evenness = NA)
   #for every plot
   for(i in 1:length(unique(treeTable$plot))){
     
@@ -32,9 +20,17 @@ treespecies_evenness <- function(treeTable, entropy, outputFolder){
     entropyInPlot <- entropy$entropy[entropy$plotNumber == unique(treeTable$plot)[i]]
     #load the tree species of one plot
     treesInPlot <- treeTable[treeTable$plot == unique(treeTable$plot)[i],]
+    treesInPlot <- treesInPlot["level"]
+    deadTreesInPlot <- deathwoodTable[deathwoodTable$plot == unique(treeTable$plot)[i],]
+    deadTreesInPlot <- deadTreesInPlot["level"]
+    #bind them together
+    allTreesInPLot <- rbind(treesInPlot, deadTreesInPlot)
+    #remove NAs
+    allTreesInPLot <- allTreesInPLot[!is.na(allTreesInPLot)]
+    
     #for maximum entropy:
     #calculate the number of elements
-    n <- length(unique(treesInPlot$specID))
+    n <- length(unique(allTreesInPLot))
     #calculate the probability of every species (all have the same probability)
     prob <- 1/n
     #calculate the logarithm for one species
@@ -46,15 +42,15 @@ treespecies_evenness <- function(treeTable, entropy, outputFolder){
     ######################################
     
     if(i == 1){
-      totalTreespeciesEvenness$plotNumber <- unique(treeTable$plot)[i]
-      totalTreespeciesEvenness$evenness <- evenness
+      totalTreelevelEvenness$plotNumber <- unique(treeTable$plot)[i]
+      totalTreelevelEvenness$evenness <- evenness
     }else{
       temp_plotNumber <- unique(treeTable$plot)[i]
       temp_evenness <- evenness
-      totalTreespeciesEvenness[i,] <- c(temp_plotNumber, temp_evenness)
+      totalTreelevelEvenness[i,] <- c(temp_plotNumber, temp_evenness)
     }
   }
-
+  
   #save the data frame
-  write.csv(totalTreespeciesEvenness, outputFolder, row.names = FALSE)  
+  write.csv(totalTreelevelEvenness, outputFolder, row.names = FALSE)  
 }

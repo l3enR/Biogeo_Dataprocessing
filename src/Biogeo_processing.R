@@ -185,7 +185,18 @@ treecondition_entropy(treeTable = trees, deathwoodTable = deathwood, outputFolde
 totalTreeConditionEntropy <- read.csv(paste0(file_base, paste0("entropy/treeConditionEntropy_vers", currentVersion,".csv")), stringsAsFactors = FALSE)
 #------------------------------------------------------------------------------
 
-# 3.4 tree species evenness
+# 3.4 overall entropy
+ 
+source(paste0(file_base, "src/overallEntropy_fun.R"))
+overall_entropy(species = read.csv(paste0(file_base, "entropy/treeSpeciesEntropy_vers", currentVersion, ".csv"), stringsAsFactors = FALSE),
+                level = read.csv(paste0(file_base, paste0("entropy/treeLevelEntropy_vers", currentVersion,".csv")), stringsAsFactors = FALSE),
+                condition = read.csv(paste0(file_base, paste0("entropy/treeConditionEntropy_vers", currentVersion,".csv")), stringsAsFactors = FALSE),
+                outputFolder = paste0(file_base, paste0("entropy/overallEntropy_vers", currentVersion,".csv")))
+
+overallEntropy <- read.csv(paste0(file_base, paste0("entropy/overallEntropy_vers", currentVersion,".csv")), stringsAsFactors = FALSE)
+#------------------------------------------------------------------------------
+
+# 3.5 tree species evenness
 
 #load tree species evenness function
 source(paste0(file_base, "src/treespeciesEvenness_fun.R"))
@@ -195,4 +206,46 @@ treespecies_evenness(treeTable = trees,
                      entropy = read.csv(paste0(file_base, "entropy/treeSpeciesEntropy_vers", currentVersion, ".csv"), stringsAsFactors = FALSE), 
                      outputFolder = paste0(file_base, "evenness/treeSpeciesEvenness_vers", currentVersion, ".csv"))
 
-totalTreespeciesEntropy <- read.csv(paste0(file_base, "evenness/treeSpeciesEvenness_vers", currentVersion, ".csv"), stringsAsFactors = FALSE)
+totalTreespeciesEvenness <- read.csv(paste0(file_base, "evenness/treeSpeciesEvenness_vers", currentVersion, ".csv"), stringsAsFactors = FALSE)
+#------------------------------------------------------------------------------
+
+# 3.6 tree level evenness
+
+#load tree level evenness function
+source(paste0(file_base, "src/treelevelEvenness_fun.R"))
+
+#run the function and load the output
+treelevel_evenness(treeTable = trees,
+                   deathwoodTable = deathwood,
+                   entropy = read.csv(paste0(file_base, "entropy/treeLevelEntropy_vers", currentVersion, ".csv"), stringsAsFactors = FALSE), 
+                   outputFolder = paste0(file_base, "evenness/treeLevelEvenness_vers", currentVersion, ".csv"))
+
+totalTreelevelEvenness <- read.csv(paste0(file_base, "evenness/treeLevelEvenness_vers", currentVersion, ".csv"), stringsAsFactors = FALSE)
+#------------------------------------------------------------------------------
+
+# 3.7 tree condition evenness
+
+#load tree condition evenness function
+source(paste0(file_base, "src/treeconditionEvenness_fun.R"))
+
+#run the function and load the output
+treecondition_evenness(treeTable = trees,
+                       deathwoodTable = deathwood,
+                       entropy = read.csv(paste0(file_base, "entropy/treeConditionEntropy_vers", currentVersion, ".csv"), stringsAsFactors = FALSE), 
+                       outputFolder = paste0(file_base, "evenness/treeConditionEvenness_vers", currentVersion, ".csv"))
+
+totalTreeconditionEvenness <- read.csv(paste0(file_base, "evenness/treeConditionEvenness_vers", currentVersion, ".csv"), stringsAsFactors = FALSE)
+#------------------------------------------------------------------------------
+
+# 3.8 overall evenness
+
+#load overall evenness function
+source(paste0(file_base, "src/overallEvenness_fun.R"))
+
+#run the function and load the output
+overall_evenness(species = read.csv(paste0(file_base, "evenness/treeSpeciesEvenness_vers", currentVersion, ".csv"), stringsAsFactors = FALSE),
+                 level = read.csv(paste0(file_base, "evenness/treeLevelEvenness_vers", currentVersion, ".csv"), stringsAsFactors = FALSE),
+                 condition = read.csv(paste0(file_base, "evenness/treeConditionEvenness_vers", currentVersion, ".csv"), stringsAsFactors = FALSE),
+                 outputFolder = paste0(file_base, "evenness/overallEvenness_vers", currentVersion, ".csv"))
+
+overallEvenness <- read.csv(paste0(file_base, "evenness/overallEvenness_vers", currentVersion, ".csv"), stringsAsFactors = FALSE)

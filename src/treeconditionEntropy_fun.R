@@ -29,7 +29,7 @@
 treecondition_entropy <- function(treeTable, deathwoodTable, outputFolder){
   #' @description Calculates the tree species entropy using a dataframe column of the species in one plot  
   #' 
-  #' @param treeTable A dataframe containing at least the plotnumber (header = plot) and the tree species (header = species)
+  #' @param treeTable A dataframe containing at least the plotnumber (header = plot) and the tree species (header = specID)
   #' @param deathwoodTable A dataframe containing at least the plotnumber (header = plot) and the class (header = class). Only trees of the class 1 and three were used
   #' @param outputFolder The folder where the dataframe should be saved.
   #' 
@@ -44,9 +44,9 @@ treecondition_entropy <- function(treeTable, deathwoodTable, outputFolder){
     #for one plot with the number i
     ######################################
     #get the number of living trees in one plot
-    livingTrees <- nrow(treeTable[treeTable$plot == i,])
+    livingTrees <- nrow(treeTable[treeTable$plot == unique(treeTable$plot)[i],])
     #get the number of dead trees
-    deadTrees <- deathwoodTable[deathwoodTable$plot == i,]
+    deadTrees <- deathwoodTable[deathwoodTable$plot == unique(treeTable$plot)[i],]
     deadTrees <- nrow(deadTrees[deadTrees$class == 1 | deadTrees$class == 3,])
     #fill the count argument
     count <- c(livingTrees, deadTrees)
@@ -56,12 +56,12 @@ treecondition_entropy <- function(treeTable, deathwoodTable, outputFolder){
     #generating a dataframe containing the results for the two conditions
     entropy <- data.frame(condition = condition, count = count, probability = NA, entropy = NA)
     #calculating the probability and the entropy
-    for(i in 1:nrow(entropy)){
-      entropy$probability[i] <- entropy$count[i] / sum(entropy$count)
-      entropy$entropy[i] <- entropy$probability[i] * log(entropy$probability[i], base = 2)
+    for(j in 1:nrow(entropy)){
+      entropy$probability[j] <- entropy$count[j] / sum(entropy$count)
+      entropy$entropy[j] <- entropy$probability[j] * log(entropy$probability[j], base = 2)
       #to avoid NaN values entropy is turned to 0
-      if(is.na(entropy$entropy[i])){
-        entropy$entropy[i] <- 0
+      if(is.na(entropy$entropy[j])){
+        entropy$entropy[j] <- 0
       }
     }
     #calculating the overall tree species entropy for the plot

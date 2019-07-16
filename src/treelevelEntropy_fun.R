@@ -41,29 +41,36 @@ treelevel_entropy <- function(treeTable, deathwoodTable, outputFolder){
     #for one plot with the number i
     ######################################
     #load the tree levels of one plot
-    treesInPlot <- treeTable[treeTable$plot == i,]
+    treesInPlot <- treeTable[treeTable$plot == unique(treeTable$plot)[i],]
     treesInPlot <- treesInPlot["level"]
-    deadTreesInPlot <- deathwoodTable[deathwoodTable$plot == i,]
+    deadTreesInPlot <- deathwoodTable[deathwoodTable$plot == unique(treeTable$plot)[i],]
     deadTreesInPlot <- deadTreesInPlot["level"]
     allTreesInPLot <- rbind(treesInPlot, deadTreesInPlot)
     #remove NA values
     allTreesInPLot <- allTreesInPLot[!is.na(allTreesInPLot)]
-    #extract the unique levels
-    level <- unique(allTreesInPLot)
-    #extract the number of the unique levels 
-    count <- c()
-    for(k in 1:length(level)){
-      count[k] <- length(allTreesInPLot[allTreesInPLot == level[k]])
+    #the if statement is fomulated because of plots only containing NA values
+    #in this special case, the overall entropy is defined as NA
+    if(length(allTreesInPLot) == 0){
+      overallTreelvEntropy <- NA
+      
+    }else{
+      #extract the unique levels
+      level <- unique(allTreesInPLot)
+      #extract the number of the unique levels 
+      count <- c()
+      for(k in 1:length(level)){
+        count[k] <- length(allTreesInPLot[allTreesInPLot == level[k]])
+      }
+      #generating a dataframe containing the results for each individual level
+      entropy <- data.frame(level = level, count = count, probability = NA, entropy = NA)
+      #calculating the probability and the entropy
+      for(j in 1:nrow(entropy)){
+        entropy$probability[j] <- entropy$count[j] / sum(entropy$count)
+        entropy$entropy[j] <- entropy$probability[j] * log(entropy$probability[j], base = 2)
+      }
+      #calculating the overall tree level entropy for the plot
+      overallTreelvEntropy <- -sum(entropy$entropy)
     }
-    #generating a dataframe containing the results for each individual level
-    entropy <- data.frame(level = level, count = count, probability = NA, entropy = NA)
-    #calculating the probability and the entropy
-    for(j in 1:nrow(entropy)){
-      entropy$probability[j] <- entropy$count[j] / sum(entropy$count)
-      entropy$entropy[j] <- entropy$probability[j] * log(entropy$probability[j], base = 2)
-    }
-    #calculating the overall tree level entropy for the plot
-    overallTreelvEntropy <- -sum(entropy$entropy)
     ######################################
     
     if(i == 1){
